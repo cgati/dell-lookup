@@ -10,7 +10,7 @@ type Configuration struct {
 	ApiKey string
 }
 
-func importConfig() string {
+func getAPIKey() string {
 	file, err := ioutil.ReadFile("../config.json")
 	if err != nil {
 		log.Fatal(err)
