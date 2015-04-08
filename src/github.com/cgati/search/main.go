@@ -7,6 +7,7 @@ import (
 
 func main() {
 	args := os.Args
+	//k33bz: Add error checking. REGEX: [0-9a-zA-Z]{7}
 	if len(args) < 2 {
 		fmt.Println("Please provide at least one service tag.")
 		//k33bz: Updated to match documentation
