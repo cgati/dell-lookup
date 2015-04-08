@@ -9,7 +9,8 @@ func main() {
 	args := os.Args
 	if len(args) < 2 {
 		fmt.Println("Please provide at least one service tag.")
-		fmt.Printf("Usage: %s 12345", args[0])
+		//k33bz: Updated to match documentation
+		fmt.Printf("Usage: %s 1A2B3C4", args[0])
 	} else {
 		content, err := searchServiceTags(args[1:])
 		if err != nil {
