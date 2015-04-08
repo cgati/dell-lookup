@@ -7,25 +7,25 @@ import (
 	"net/http"
 )
 
-func searchServiceTags(serviceTags []string) (string, error) {
+func searchServiceTags(serviceTags []string) ([]byte, error) {
 	client := &http.Client{}
 
 	request, err := http.NewRequest("GET", buildURL(serviceTags), nil)
 	if err != nil {
-		return "", errors.New("error reaching dell")
+		return []byte{}, errors.New("error reaching dell")
 	}
 	request.Header.Set("apikey", getAPIKey())
 
 	response, err := client.Do(request)
 	if err != nil {
-		return "", errors.New("HTTP protocol error")
+		return []byte{}, errors.New("HTTP protocol error")
 	} else {
 		defer response.Body.Close()
 		contents, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			return "", errors.New("couldn't parse response body")
+			return []byte{}, errors.New("couldn't parse response body")
 		}
-		return string(contents), nil
+		return contents, nil
 	}
 }
 
