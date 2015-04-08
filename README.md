@@ -11,3 +11,8 @@ config.json
     "ApiKey": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 }
 ```
+
+### Dell Documentation
+The official Dell Support Services API Documentation Can be found here:
+http://en.community.dell.com/dell-groups/supportapisgroup/
+
