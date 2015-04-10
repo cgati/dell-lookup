@@ -2,10 +2,55 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"errors"
 	"io/ioutil"
 	"net/http"
+	"regexp"
 )
+
+func sanatizeDellResult(result []byte) []byte {
+	// this can't be described as anything other than
+	// a hack. more thought will have to go into this
+	input := string(result)
+
+	re := regexp.MustCompile(":([0-9]*)(,|$)")
+	sanatized := re.ReplaceAllString(string(input), `:"$1"$2`)
+
+	if sanatized[len(sanatized)-18:len(sanatized)-3] == `"Response":null` {
+		if sanatized[len(sanatized)-21:len(sanatized)-20] == "}" {
+			fe := regexp.MustCompile(`"FaultException":{`)
+			sanatized = fe.ReplaceAllString(sanatized, `"FaultException":[{`)
+			sanatized = sanatized[:len(sanatized)-20] + `]},"Response":null}}}`
+		}
+		return []byte(sanatized)
+	}
+	da := regexp.MustCompile(`DellAsset":{`)
+	sanatized = da.ReplaceAllString(sanatized, `DellAsset":[{`)
+	if sanatized[len(sanatized)-5:len(sanatized)-4] == "}" {
+		sanatized = sanatized[:len(sanatized)-4] + "]}}}}"
+	}
+	return []byte(sanatized)
+}
+
+func getServiceTagsAsJson(st []byte) ([]byte, error) {
+	array, err := validateServiceTags(st)
+	if err != nil {
+		return []byte{}, errors.New("a provided service tag was invalid")
+	}
+	content, _ := searchServiceTags(array)
+	dellAssets, err := getWarrantyInformation(content)
+	if err != nil {
+		dellError, err := getErrorInformation(content)
+		if err != nil {
+			return []byte{}, errors.New("an unexpected error occurred")
+		}
+		jsonError, _ := json.Marshal(dellError)
+		return jsonError, nil
+	}
+	jsonAssets, _ := json.Marshal(dellAssets)
+	return jsonAssets, nil
+}
 
 func searchServiceTags(serviceTags []string) ([]byte, error) {
 	client := &http.Client{}
@@ -25,6 +70,7 @@ func searchServiceTags(serviceTags []string) ([]byte, error) {
 		if err != nil {
 			return []byte{}, errors.New("couldn't parse response body")
 		}
+		contents = sanatizeDellResult(contents)
 		return contents, nil
 	}
 }
