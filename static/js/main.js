@@ -1,11 +1,20 @@
-document.addEventListener("keydown", doKeyDown)
+document.addEventListener("keydown", doKeyDown);
+
+var button = document.getElementById("st-button");
+button.addEventListener('click', function() {
+    sendData();
+}, false);
 
 function doKeyDown(e) {
     if (e.keyCode == 13) {
-        var input = document.getElementById("st-search");
-        if (input.value !== "") {
-            getServiceTag(input.value);
-        }
+        sendData();
+    }
+}
+
+function sendData() {
+    var input = document.getElementById("st-search");
+    if (input.value !== "") {
+        getServiceTag(input.value);
     }
 }
 
