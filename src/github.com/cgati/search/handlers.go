@@ -49,7 +49,7 @@ func testHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	content, err := getServiceTagsAsJson(fromClient)
 	if err != nil {
-		fmt.Fprintf(w, "There was an error with a provided service tag: "+err.Error())
+		fmt.Fprintf(w, "Error: "+err.Error())
 		return
 	}
 

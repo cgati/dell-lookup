@@ -16,20 +16,6 @@ func sanatizeDellResult(result []byte) []byte {
 
 	re := regexp.MustCompile(":([0-9]*)(,|$)")
 	sanatized := re.ReplaceAllString(string(input), `:"$1"$2`)
-
-	if sanatized[len(sanatized)-18:len(sanatized)-3] == `"Response":null` {
-		if sanatized[len(sanatized)-21:len(sanatized)-20] == "}" {
-			fe := regexp.MustCompile(`"FaultException":{`)
-			sanatized = fe.ReplaceAllString(sanatized, `"FaultException":[{`)
-			sanatized = sanatized[:len(sanatized)-20] + `]},"Response":null}}}`
-		}
-		return []byte(sanatized)
-	}
-	da := regexp.MustCompile(`DellAsset":{`)
-	sanatized = da.ReplaceAllString(sanatized, `DellAsset":[{`)
-	if sanatized[len(sanatized)-5:len(sanatized)-4] == "}" {
-		sanatized = sanatized[:len(sanatized)-4] + "]}}}}"
-	}
 	return []byte(sanatized)
 }
 
@@ -38,15 +24,13 @@ func getServiceTagsAsJson(st []byte) ([]byte, error) {
 	if err != nil {
 		return []byte{}, errors.New("a provided service tag was invalid")
 	}
-	content, _ := searchServiceTags(array)
+	content, err := searchServiceTags(array)
+	if err != nil {
+		return []byte{}, errors.New("there was a problem looking up your service tags. Please try again.")
+	}
 	dellAssets, err := getWarrantyInformation(content)
 	if err != nil {
-		dellError, err := getErrorInformation(content)
-		if err != nil {
-			return []byte{}, errors.New("an unexpected error occurred")
-		}
-		jsonError, _ := json.Marshal(dellError)
-		return jsonError, nil
+		return []byte{}, err
 	}
 	jsonAssets, _ := json.Marshal(dellAssets)
 	return jsonAssets, nil
@@ -63,7 +47,7 @@ func searchServiceTags(serviceTags []string) ([]byte, error) {
 
 	response, err := client.Do(request)
 	if err != nil {
-		return []byte{}, errors.New("HTTP protocol error")
+		return []byte{}, err
 	} else {
 		defer response.Body.Close()
 		contents, err := ioutil.ReadAll(response.Body)
