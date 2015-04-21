@@ -42,17 +42,16 @@ function getServiceTag(sts) {
 }
 
 function renderResult(data) {
-    var container = document.getElementById("container");
+    var content = document.getElementById("content");
     var rendered = document.getElementById("assetList");
     if (rendered !== null) {
-        container.removeChild(rendered);
+        content.removeChild(rendered);
     }
     var dellResult = JSON.parse(data);
     var assetList = document.createElement("div");
     assetList.setAttribute("id", "assetList");
     for (a of dellResult.Assets) {
         var asset = document.createElement("div");
-		//asset.setAttribute('class','warrantyTable');
         var assetSpan = document.createElement("span");
         assetSpan.textContent = a.ServiceTag + " - " + a.MachineDescription;
         asset.appendChild(assetSpan);
@@ -97,6 +96,5 @@ function renderResult(data) {
         var brk = document.createElement("br");
         assetList.appendChild(brk);
     }
-    var dump = document.getElementById("content");
-    container.insertBefore(assetList, dump.nextSibling);
+    content.appendChild(assetList);
 }
