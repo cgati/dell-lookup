@@ -10,8 +10,6 @@ import (
 )
 
 func sanatizeDellResult(result []byte) []byte {
-	// this can't be described as anything other than
-	// a hack. more thought will have to go into this
 	input := string(result)
 
 	re := regexp.MustCompile(":([0-9]*)(,|$)")
@@ -32,6 +30,7 @@ func getServiceTagsAsJson(st []byte) ([]byte, error) {
 	if err != nil {
 		return []byte{}, err
 	}
+	dellAssets = AddWarrantyStatus(dellAssets)
 	jsonAssets, _ := json.Marshal(dellAssets)
 	return jsonAssets, nil
 }

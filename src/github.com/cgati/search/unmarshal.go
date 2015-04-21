@@ -57,6 +57,7 @@ type DellAsset struct {
 			ServiceLevelGroup       string `json:"ServiceLevelGroup"`
 			ServiceProvider         string `json:"ServiceProvider"`
 			StartDate               string `json:"StartDate"`
+			InWarranty              bool
 		} `json:"Warranty"`
 	} `json:"Warranties"`
 }
