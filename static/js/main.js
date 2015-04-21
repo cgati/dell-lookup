@@ -52,10 +52,12 @@ function renderResult(data) {
     assetList.setAttribute("id", "assetList");
     for (a of dellResult.Assets) {
         var asset = document.createElement("div");
+		//asset.setAttribute('class','warrantyTable');
         var assetSpan = document.createElement("span");
         assetSpan.textContent = a.ServiceTag + " - " + a.MachineDescription;
         asset.appendChild(assetSpan);
         var wTable = document.createElement("table");
+		wTable.setAttribute("class","warrantyTable");
         var tHead = document.createElement("thead");
         var tHeadRow = document.createElement("tr");
         var thDescription = document.createElement("th");
@@ -65,7 +67,7 @@ function renderResult(data) {
         var thEnd = document.createElement("th");
         thEnd.textContent = "End Date";
         var thInWarranty = document.createElement("th");
-        thInWarranty.textContent = "Is In Warranty?";
+        thInWarranty.textContent = "Warranty Valid";
         tHeadRow.appendChild(thDescription);
         tHeadRow.appendChild(thStart);
         tHeadRow.appendChild(thEnd);
